@@ -6,8 +6,12 @@ const axios = require('axios');
 const app = express();
 app.use(bodyParser.json());
 
+const events = [];
+
 app.post('/events', (req, res) => {
     const event = req.body;
+
+    events.push(event); // Store events in memory for missing event sync with query service
 
     // Simple event bus using Express
     axios.post('http://localhost:4000/events', event).catch((err) => {
@@ -25,6 +29,10 @@ app.post('/events', (req, res) => {
 
     res.send({ status: 'OK' });
 })
+
+app.get('/events', (req, res) => {
+    res.send(events);
+});
 
 app.listen(4005, () => {
     console.log('Listening on port 4005');
